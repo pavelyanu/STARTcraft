@@ -1,5 +1,6 @@
 #include "AIModule.h"
 #include "Utils.h"
+#include <bwem.h>
 
 AIModule::AIModule()
 {
@@ -11,6 +12,7 @@ void AIModule::onStart()
 {
 	//BWAPI::Broodwar->setLocalSpeed(5);
     //BWAPI::Broodwar->setFrameSkip(0);
+    BWEM::Map::Instance().Initialize(BWAPI::BroodwarPtr);
     BWAPI::Broodwar->enableFlag(BWAPI::Flag::UserInput);
     planner.OnStart();
 }

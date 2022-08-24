@@ -2,6 +2,7 @@
 
 #include <BWAPI.h>
 #include "Utils.h"
+#include <bwem.h>
 
 #include <map>
 #include <vector>
@@ -12,8 +13,9 @@ Planner::Planner() {
 	lastOrder = 0;
 	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 8);
 	AddToOrder(BWAPI::UnitTypes::Protoss_Gateway, 10);
-	AddToOrder(BWAPI::UnitTypes::Protoss_Assimilator, 11);
-	AddToOrder(BWAPI::UnitTypes::Protoss_Cybernetics_Core, 13);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Zealot, 11, 5);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Assimilator, 12);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Cybernetics_Core, 14);
 	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 15);
 	AddToOrder(BWAPI::UnitTypes::Protoss_Dragoon, 18, 5);
 	AddToOrder(BWAPI::UpgradeTypes::Protoss_Ground_Weapons, 20);
@@ -23,6 +25,14 @@ Planner::Planner() {
 	AddToOrder(BWAPI::UnitTypes::Protoss_Observatory, 34);
 	AddToOrder(BWAPI::UnitTypes::Protoss_Observer, 35, 5);
 	AddToOrder(BWAPI::UnitTypes::Protoss_Gateway, 37);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 37);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Observatory, 34);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Zealot, 38, 20);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Dragoon, 38, 10);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 45);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 50);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 55);
+	AddToOrder(BWAPI::UnitTypes::Protoss_Pylon, 60);
 }
 
 void Planner::AddToOrder(BWAPI::UnitType type, int order)
@@ -169,6 +179,17 @@ void Planner::OnUnitComplete(BWAPI::Unit unit)
 	{
 		BWAPI::Unit closestMineral = Utils::GetClosestUnitTo(unit, BWAPI::Broodwar->getMinerals());
 		commander.PushCommand(unit, BWAPI::UnitCommand::rightClick(unit, closestMineral));
+	}
+	else if (unit->getType() == BWAPI::UnitTypes::Protoss_Zealot)
+	{
+		auto& map = BWEM::Map::Instance();
+		if (!map.Initialized())
+		{
+			map.Initialize(BWAPI::BroodwarPtr);
+		}
+		auto area = map.GetNearestArea(BWAPI::Broodwar->self()->getStartLocation());
+		auto choke_point = area->ChokePoints()[0];
+		unit->patrol(BWAPI::Position(choke_point->Center()));
 	}
 }
 

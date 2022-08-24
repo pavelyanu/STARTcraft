@@ -3,6 +3,7 @@
 #include "Planner.h"
 
 #include <BWAPI.h>
+#include <bwem.h>
 
 class AIModule
 {

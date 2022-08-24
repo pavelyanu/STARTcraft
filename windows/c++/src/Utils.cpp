@@ -24,14 +24,14 @@ void Utils::RightClick(BWAPI::Unit unit, BWAPI::Position target)
 	unit->rightClick(target);
 }
 
-void Utils::IssueCommand(BWAPI::Unit unit, BWAPI::UnitCommand command)
+bool Utils::IssueCommand(BWAPI::Unit unit, BWAPI::UnitCommand command)
 {
-	if (!unit) { return; }
+	if (!unit) { return false; }
 	const int lastCommandTime = unit->getLastCommandFrame();
 	const int frameCount = BWAPI::Broodwar->getFrameCount();
 	const BWAPI::UnitCommand lastCommand = unit->getLastCommand();
-	if (lastCommandTime >= frameCount || command == lastCommand) { return; }
-	unit->issueCommand(command);
+	if (lastCommandTime >= frameCount || command == lastCommand) { return true; }
+	return unit->issueCommand(command);
 }
 
 BWAPI::Unit Utils::GetUnitOfType(BWAPI::UnitType type)

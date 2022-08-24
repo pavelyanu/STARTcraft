@@ -15,8 +15,10 @@
     <ClInclude Include="..\src\Commander.h" />
     <ClInclude Include="..\src\AIModule.h" />
     <ClInclude Include="..\src\Grid.hpp" />
+    <ClInclude Include="..\src\Manager.h" />
     <ClInclude Include="..\src\MapTools.h" />
     <ClInclude Include="..\src\Planner.h" />
+    <ClInclude Include="..\src\Role.h" />
     <ClInclude Include="..\src\StarterBot.h" />
     <ClInclude Include="..\src\Tools.h" />
     <ClInclude Include="..\src\Utils.h" />
@@ -26,8 +28,10 @@
     <ClCompile Include="..\src\Commander.cpp" />
     <ClCompile Include="..\src\AIModule.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\Manager.cpp" />
     <ClCompile Include="..\src\MapTools.cpp" />
     <ClCompile Include="..\src\Planner.cpp" />
+    <ClCompile Include="..\src\Role.cpp" />
     <ClCompile Include="..\src\StarterBot.cpp" />
     <ClCompile Include="..\src\Tools.cpp" />
     <ClCompile Include="..\src\Utils.cpp" />
@@ -88,7 +92,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>../bwapi/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../bwapi/include;../bwem/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;EXAMPLEAIMODULE_EXPORTS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -102,7 +106,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>../bwapi/lib/Debug/BWAPILIB.lib;../bwapi/lib/Debug/BWAPIClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../bwapi/lib/Debug/BWAPILIB.lib;../bwapi/lib/Debug/BWAPIClient.lib;../bwem/lib/Debug/BWEM-Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -113,7 +117,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>../bwapi/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../bwapi/include;../bwem/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EXAMPLEAIMODULE_EXPORTS;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

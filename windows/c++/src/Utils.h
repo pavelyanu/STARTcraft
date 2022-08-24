@@ -7,7 +7,7 @@ namespace Utils
 	const int MAXMAPSIZE = 150;
 	void RightClick(BWAPI::Unit unit, BWAPI::Unit target);
 	void RightClick(BWAPI::Unit unit, BWAPI::Position target);
-	void IssueCommand(BWAPI::Unit unit, BWAPI::UnitCommand command);
+	bool IssueCommand(BWAPI::Unit unit, BWAPI::UnitCommand command);
 	BWAPI::Unit GetUnitOfType(BWAPI::UnitType type);
 	BWAPI::Unit GetClosestUnitTo(BWAPI::Position p, const BWAPI::Unitset& units);
 	BWAPI::Unit GetClosestUnitTo(BWAPI::Unit unit, const BWAPI::Unitset& units);
