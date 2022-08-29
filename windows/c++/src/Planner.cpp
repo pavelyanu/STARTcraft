@@ -119,13 +119,7 @@ void Planner::ExecuteOrders()
 		{
 			if (mit->isBuilding())
 			{
-				//if (Utils::Build(*mit, &commander))
-				//{
-				//	mit = vector.erase(mit);
-				//	continue;
-				//}
-
-				if (manager.Build(*mit)) {
+				if (manager->Build(*mit)) {
 					mit = vector.erase(mit);
 					continue;
 				}

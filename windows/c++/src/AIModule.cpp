@@ -15,6 +15,7 @@ void AIModule::onStart()
     //BWAPI::Broodwar->setFrameSkip(0);
     BWEM::Map::Instance().Initialize(BWAPI::BroodwarPtr);   
     BWAPI::Broodwar->enableFlag(BWAPI::Flag::UserInput);
+    planner.manager = &manager;
     planner.OnStart();
 }
 
