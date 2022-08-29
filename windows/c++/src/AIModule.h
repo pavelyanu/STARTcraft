@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Planner.h"
+#include "Manager.h"
 
 #include <BWAPI.h>
 #include <bwem.h>
@@ -26,5 +27,6 @@ public:
 	void onUnitMorph(BWAPI::Unit unit);
 
 	Planner planner;
+	Manager manager;
 	int frameCounter;
 };

@@ -1,8 +1,9 @@
 #include "Planner.h"
 
 #include <BWAPI.h>
-#include "Utils.h"
 #include <bwem.h>
+
+#include "Utils.h"
 
 #include <map>
 #include <vector>
@@ -118,8 +119,13 @@ void Planner::ExecuteOrders()
 		{
 			if (mit->isBuilding())
 			{
-				if (Utils::Build(*mit, &commander))
-				{
+				//if (Utils::Build(*mit, &commander))
+				//{
+				//	mit = vector.erase(mit);
+				//	continue;
+				//}
+
+				if (manager.Build(*mit)) {
 					mit = vector.erase(mit);
 					continue;
 				}
@@ -142,11 +148,11 @@ void Planner::OnStart()
 	BWAPI::Unitset units = BWAPI::Broodwar->self()->getUnits();
 	for (auto& unit : units)
 	{
-		if (unit->getType().isWorker())
-		{
-			BWAPI::Unit closestMineral = Utils::GetClosestUnitTo(unit, BWAPI::Broodwar->getMinerals());
-			commander.PushCommand(unit, BWAPI::UnitCommand::rightClick(unit, closestMineral));
-		}
+		//if (unit->getType().isWorker())
+		//{
+		//	BWAPI::Unit closestMineral = Utils::GetClosestUnitTo(unit, BWAPI::Broodwar->getMinerals());
+		//	commander.PushCommand(unit, BWAPI::UnitCommand::rightClick(unit, closestMineral));
+		//}
 	}
 }
 
@@ -159,38 +165,38 @@ void Planner::OnFrame()
 
 void Planner::OnUnitComplete(BWAPI::Unit unit)
 {
-	if (unit->getType() == BWAPI::UnitTypes::Protoss_Assimilator)
-	{
-		int probe_count = 0;
-		for (auto& u : BWAPI::Broodwar->self()->getUnits())
-		{
-			if (u->getType() != BWAPI::UnitTypes::Protoss_Probe) { continue; }
-			if (!u->isCompleted()) { continue; }
-			Utils::RightClick(u, unit);
-			commander.PushCommand(u, BWAPI::UnitCommand::rightClick(u, unit));
-			probe_count++;
-			if (probe_count >= 3)
-			{
-				break;
-			}
-		}
-	}
-	else if (unit->getType().isWorker())
-	{
-		BWAPI::Unit closestMineral = Utils::GetClosestUnitTo(unit, BWAPI::Broodwar->getMinerals());
-		commander.PushCommand(unit, BWAPI::UnitCommand::rightClick(unit, closestMineral));
-	}
-	else if (unit->getType() == BWAPI::UnitTypes::Protoss_Zealot)
-	{
-		auto& map = BWEM::Map::Instance();
-		if (!map.Initialized())
-		{
-			map.Initialize(BWAPI::BroodwarPtr);
-		}
-		auto area = map.GetNearestArea(BWAPI::Broodwar->self()->getStartLocation());
-		auto choke_point = area->ChokePoints()[0];
-		unit->patrol(BWAPI::Position(choke_point->Center()));
-	}
+	//if (unit->getType() == BWAPI::UnitTypes::Protoss_Assimilator)
+	//{
+	//	int probe_count = 0;
+	//	for (auto& u : BWAPI::Broodwar->self()->getUnits())
+	//	{
+	//		if (u->getType() != BWAPI::UnitTypes::Protoss_Probe) { continue; }
+	//		if (!u->isCompleted()) { continue; }
+	//		Utils::RightClick(u, unit);
+	//		commander.PushCommand(u, BWAPI::UnitCommand::rightClick(u, unit));
+	//		probe_count++;
+	//		if (probe_count >= 3)
+	//		{
+	//			break;
+	//		}
+	//	}
+	//}
+	//else if (unit->getType().isWorker())
+	//{
+	//	BWAPI::Unit closestMineral = Utils::GetClosestUnitTo(unit, BWAPI::Broodwar->getMinerals());
+	//	commander.PushCommand(unit, BWAPI::UnitCommand::rightClick(unit, closestMineral));
+	//}
+	//else if (unit->getType() == BWAPI::UnitTypes::Protoss_Zealot)
+	//{
+	//	auto& map = BWEM::Map::Instance();
+	//	if (!map.Initialized())
+	//	{
+	//		map.Initialize(BWAPI::BroodwarPtr);
+	//	}
+	//	auto area = map.GetNearestArea(BWAPI::Broodwar->self()->getStartLocation());
+	//	auto choke_point = area->ChokePoints()[0];
+	//	unit->patrol(BWAPI::Position(choke_point->Center()));
+	//}
 }
 
 template<typename T>

@@ -2,6 +2,7 @@
 #include "Utils.h"
 #include <bwem.h>
 
+
 AIModule::AIModule()
 {
     frameCounter = 0;
@@ -10,9 +11,9 @@ AIModule::AIModule()
 // Called when the bot starts!
 void AIModule::onStart()
 {
-	//BWAPI::Broodwar->setLocalSpeed(5);
+	BWAPI::Broodwar->setLocalSpeed(5);
     //BWAPI::Broodwar->setFrameSkip(0);
-    BWEM::Map::Instance().Initialize(BWAPI::BroodwarPtr);
+    BWEM::Map::Instance().Initialize(BWAPI::BroodwarPtr);   
     BWAPI::Broodwar->enableFlag(BWAPI::Flag::UserInput);
     planner.OnStart();
 }
@@ -31,6 +32,7 @@ void AIModule::onFrame()
     if (frameCounter < 0)
     {
 		planner.OnFrame();
+        manager.OnFrame();
         frameCounter += 20;
     }
     frameCounter--;
@@ -39,6 +41,7 @@ void AIModule::onFrame()
 void AIModule::drawDebugInformation()
 {
     Utils::DrawUnitCommands();
+    Utils::DrawUnitIDs();
 }
 
 void AIModule::onUnitDestroy(BWAPI::Unit unit)
@@ -59,6 +62,7 @@ void AIModule::onUnitCreate(BWAPI::Unit unit)
 void AIModule::onUnitComplete(BWAPI::Unit unit)
 {
     planner.OnUnitComplete(unit);
+    manager.OnUnitComplete(unit);
 }
 
 void AIModule::onUnitShow(BWAPI::Unit unit)

@@ -12,7 +12,7 @@ public:
 	void OnFrame();
 	void OnStart();
 	void OnUnitComplete(BWAPI::Unit unit);
-	void Build(BWAPI::UnitType unit);
-private:
+	bool Build(BWAPI::UnitType type);
+	void DrawRoles();
 	std::map<BWAPI::Unit, std::unique_ptr<Role>> roles;
 };

@@ -3,10 +3,10 @@
 #include <BWAPI.h>
 #include <bwem.h>
 
+#include <memory>
+
 #include "Command.h"
 #include "Utils.h"
-
-#include <memory>
 
 Role::Role()
 {
@@ -31,7 +31,7 @@ void Role::ClearCommands()
 	commands.clear();
 }
 
-void Role::PushNext()
+void Role::PopNext()
 {
 	command = std::move(commands.back());
 	commands.pop_back();
@@ -51,19 +51,25 @@ Worker::Worker(BWAPI::Unit _self, BWAPI::Unit target)
 {
 	self = _self;
 	command = nullptr;
-	PushCommand(Gather(self, target));
+	PushCommand(std::move(std::make_unique<Gather>(self, target)));
 }
 
 void Worker::OnFrame()
 {
-	if (commands.empty())
+	if ((command == nullptr || command.get()->IsDone()) && !commands.empty())
 	{
-		auto minerals = BWAPI::Broodwar->getMinerals();
-		auto mineral = Utils::GetClosestUnitTo(BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation()), minerals);
-		auto command = Gather(self, mineral);
-		PushCommand(command);
+		PopNext();
 	}
-	if (command == nullptr || command.get()->IsDone()) PushNext();
+	else if (commands.empty())
+	{
+		PushCommand(std::move(std::make_unique<Gather>(self)));
+	}
+	else if (!command.get()->IsDone())
+	{
+		command.get()->Execute();
+	}
+	
+
 }
 
 Worker::~Worker()
@@ -85,20 +91,41 @@ Guard::Guard(BWAPI::Unit _self, BWAPI::Position)
 
 void Guard::OnFrame()
 {
-	if (commands.empty())
+	if ((command == nullptr || command.get()->IsDone()) && !commands.empty())
+	{
+		PopNext();
+	}
+	else if (commands.empty())
 	{
 		auto& map = BWEM::Map::Instance();
 		auto area = map.GetArea(BWAPI::Broodwar->self()->getStartLocation());
-		auto choke_point = area->ChokePoints()[0];
-		PushCommand(Hold(self));
-		PushCommand(Move(self, BWAPI::Position(choke_point->Center())));
+		auto chokePoints = area->ChokePoints();
+		int time = BWAPI::Broodwar->elapsedTime();
+		auto choke_point = chokePoints[time % chokePoints.size()];
+		PushCommand(std::move(std::make_unique<Hold>(self)));
+		PushCommand(std::move(std::make_unique<Move>(self, BWAPI::Position(choke_point->Center()))));
 	}
-	if (command == nullptr || command.get()->IsDone()) PushNext();
-	auto enemy = BWAPI::Broodwar->enemy();
-	auto unit = BWAPI::Broodwar->getClosestUnit(self->getPosition(), BWAPI::Filter::GetPlayer == enemy, 50);
-	if (unit != nullptr && unit->exists())
+	else if (!command.get()->IsDone())
 	{
-		PushCommand(Attack(self, unit));
+		command.get()->Execute();
+	}
+	auto enemy = BWAPI::Broodwar->enemy();
+	auto enemy_unit = BWAPI::Broodwar->getClosestUnit(
+		self->getPosition(), 
+		BWAPI::Filter::GetPlayer == enemy,
+		self->getType().sightRange()
+	);
+	if (enemy_unit != nullptr && enemy_unit->exists())
+	{
+		if (!attacking)
+		{
+			BWAPI::Broodwar->setLocalSpeed(111);
+			PushCommand(std::move(std::make_unique<Attack>(self, enemy_unit)));
+		}
+	}
+	else
+	{
+		attacking = false;
 	}
 }
 

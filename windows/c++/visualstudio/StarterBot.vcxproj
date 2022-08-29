@@ -107,7 +107,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>../bwapi/lib/Debug/BWAPILIB.lib;../bwapi/lib/Debug/BWAPIClient.lib;../bwem/lib/Debug/BWEM-Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
@@ -138,7 +138,7 @@
       <LinkLibraryDependencies>true</LinkLibraryDependencies>
     </ProjectReference>
     <Link>
-      <AdditionalDependencies>../bwapi/lib/Release/BWAPILIB.lib;../bwapi/lib/Release/BWAPIClient.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../bwapi/lib/Release/BWAPILIB.lib;../bwapi/lib/Release/BWAPIClient.lib;../bwem/lib/Release/BWEM-Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

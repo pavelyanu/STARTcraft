@@ -3,6 +3,8 @@
 #include <BWAPI.h>
 #include "Utils.h"
 
+using namespace Commands;
+
 /*
 --------------------Command--------------------
 */

@@ -4,6 +4,9 @@
 #include <map>
 #include <vector>
 #include <tuple>
+
+#include "Manager.h"
+
 class Planner
 {
 public:
@@ -32,6 +35,7 @@ public:
 	std::map<BWAPI::UnitType, std::vector<BWAPI::UpgradeType>> upgraders;
 
 	Commander commander;
+	Manager manager;
 	template<typename T>
 	std::vector<int> GetKeysInRange(const std::map<int, T>* map, int lower, int upper);
 };

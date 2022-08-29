@@ -20,6 +20,7 @@ namespace Utils
 	bool IsProducable(BWAPI::UnitType type);
 	bool IsProducable(BWAPI::UpgradeType type);
 	void DrawUnitCommands();
+	void DrawUnitIDs();
 	int CountUnitsOfType(BWAPI::UnitType type, const BWAPI::Unitset& units);
 	void TrainWorkers(int max);
 }

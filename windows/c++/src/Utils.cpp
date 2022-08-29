@@ -216,3 +216,11 @@ void Utils::DrawUnitCommands()
         }
     }
 }
+
+void Utils::DrawUnitIDs()
+{
+    for (auto& unit : BWAPI::Broodwar->self()->getUnits())
+    {
+		BWAPI::Broodwar->drawTextMap(unit->getPosition(), std::to_string(unit->getID()).c_str(), BWAPI::Colors::White);
+    }
+}
