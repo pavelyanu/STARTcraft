@@ -1,5 +1,8 @@
 #include "Utils.h"
 
+#include <BWAPI.h>
+#include <bwem.h>
+
 #include "Commander.h"
 
 #include <iostream>
@@ -32,6 +35,16 @@ bool Utils::IssueCommand(BWAPI::Unit unit, BWAPI::UnitCommand command)
 	const BWAPI::UnitCommand lastCommand = unit->getLastCommand();
 	if (lastCommandTime >= frameCount || command == lastCommand) { return true; }
 	return unit->issueCommand(command);
+}
+
+bool Utils::IssueBuild(BWAPI::Unit unit, BWAPI::UnitType type, BWAPI::TilePosition position)
+{
+	if (!unit) { return false; }
+	const int lastCommandTime = unit->getLastCommandFrame();
+	const int frameCount = BWAPI::Broodwar->getFrameCount();
+	const BWAPI::UnitCommand lastCommand = unit->getLastCommand();
+	if (lastCommandTime >= frameCount) { return true; }
+	return unit->build(type, position);
 }
 
 BWAPI::Unit Utils::GetUnitOfType(BWAPI::UnitType type)
@@ -91,6 +104,15 @@ bool Utils::Build(BWAPI::UnitType type, BWAPI::Position p)
 		BWAPI::Broodwar->
 			getClosestUnit(p, (BWAPI::Filter::GetType == builderType) && BWAPI::Filter::IsAlly);
 	if (!builder) { return false; }
+	const BWAPI::TilePosition buildPosition =
+		BWAPI::Broodwar->getBuildLocation(type, desiredPosition, Utils::MAXMAPSIZE, builder);
+	return builder->build(type, buildPosition);
+}
+
+bool Utils::Build(BWAPI::Unit builder, BWAPI::UnitType type, BWAPI::Position p)
+{
+	if (!IsProducable(type)) { return false; }
+	const BWAPI::TilePosition desiredPosition = BWAPI::TilePosition(p);
 	const BWAPI::TilePosition buildPosition =
 		BWAPI::Broodwar->getBuildLocation(type, desiredPosition, Utils::MAXMAPSIZE, builder);
 	return builder->build(type, buildPosition);
@@ -223,4 +245,23 @@ void Utils::DrawUnitIDs()
     {
 		BWAPI::Broodwar->drawTextMap(unit->getPosition(), std::to_string(unit->getID()).c_str(), BWAPI::Colors::White);
     }
+}
+
+void Utils::DrawExpansionBase()
+{
+	std::vector<BWEM::Area> areas = BWEM::Map::Instance().Areas();
+	BWAPI::Position playerBase = BWAPI::Position(BWAPI::Broodwar->self()->getStartLocation());
+	//std::cout << "Entering drawexpansionbase\n";
+	for (auto& area : areas)
+	{
+		std::vector<BWEM::Base> bases = area.Bases();
+		if (bases.empty()) { continue; }
+		//std::cout << "Collected bases in the area\n";
+		for (auto& base : bases)
+		{
+			//std::cout << "starting to draw\n";
+			BWAPI::Broodwar->drawLineMap(base.Center(), playerBase, BWAPI::Colors::Red);
+			//std::cout << "finishing to draw\n";
+		}
+	}
 }

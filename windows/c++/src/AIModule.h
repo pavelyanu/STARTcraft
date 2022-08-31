@@ -6,6 +6,8 @@
 #include <BWAPI.h>
 #include <bwem.h>
 
+#include "MapTools.h"
+
 class AIModule
 {
 
@@ -28,5 +30,6 @@ public:
 
 	Planner planner;
 	Manager manager;
+	MapTools maptools;
 	int frameCounter;
 };

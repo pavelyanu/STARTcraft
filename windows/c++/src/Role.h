@@ -3,10 +3,12 @@
 #include <bwem.h>
 
 #include <vector>
+#include <deque>
 #include <memory>
 #include <iostream>
 
 #include "Command.h"
+#include "MapTools.h"
 
 using namespace Commands;
 
@@ -19,7 +21,7 @@ public:
 	virtual std::string name() = 0;
 	void PushCommand(std::unique_ptr<Command> _command);
 	void PopCommand();
-	const Command* GetCurrentCommand();
+	Command* GetCurrentCommand();
 	void ClearCommands();
 	void PopNext();
 	inline int CommandsLength() { return commands.size(); }
@@ -28,12 +30,11 @@ public:
 	std::unique_ptr<Command> command;
 };
 
-//template<typename T>
 inline void Role::PushCommand(std::unique_ptr<Command> _command)
 {
 	commands.push_back(std::move(command));
 	command = std::move(_command);
-	std::cout << "Pushed " << command.get()->name() << " to " << name() << self->getID() << '\n';
+	//std::cout << "Pushed " << command.get()->name() << " to " << name() << self->getID() << '\n';
 }
 
 class Worker : public Role
@@ -50,7 +51,6 @@ class Guard : public Role
 {
 public:
 	Guard(BWAPI::Unit _self);
-	//Guard(BWAPI::Unit _self);
 	Guard(BWAPI::Unit _self, BWAPI::Position);
 	void OnFrame();
 	virtual ~Guard();
@@ -58,32 +58,42 @@ public:
 	inline std::string name() { return "Guard"; }
 };
 
-class Spy : public Role
-{
-public:
-	Spy(BWAPI::Unit _self);
-	//Spy(BWAPI::Unit _self);
-	void OnFrame();
-	virtual ~Spy();
-	inline std::string name() {return "Spy";}
-};
-
 class Observer : public Role
 {
 public:
-	Observer(BWAPI::Unit _self);
-	//Observer(BWAPI::Unit _self);
+	Observer(BWAPI::Unit _self, MapTools* maptools);
 	void OnFrame();
 	virtual ~Observer();
-	inline std::string name() { return "Observer"; }
+	inline std::string name() {return "Observer";}
+	void MoveToNextDestination();
+	std::vector<BWAPI::Position> unexplored;
+	BWAPI::Position destination;
+	MapTools* maptools;
+	int frameCount;
+};
+
+class Spy : public Role
+{
+public:
+	Spy(BWAPI::Unit _self, MapTools* maptools);
+	void OnFrame();
+	void MoveToNextDestination();
+	virtual ~Spy();
+	inline std::string name() { return "Spy"; }
+	std::deque<BWAPI::TilePosition> startPositions;
+	BWAPI::TilePosition destination;
+	bool foundEnemyBase;
+	BWAPI::TilePosition enemyBase;
+	MapTools* maptools;
 };
 
 class Attacker : public Role
 {
 public:
-	Attacker(BWAPI::Unit _self);
-	//Attacker(BWAPI::Unit _self);
+	Attacker(BWAPI::Unit _self, MapTools* destination);
 	void OnFrame();
 	virtual ~Attacker();
 	inline std::string name() { return "Attacker"; }
-};
+	MapTools* maptools;
+	bool attacking;
+}; 

@@ -171,8 +171,12 @@ Build::~Build()
 
 bool Build::Execute()
 {
-	const BWAPI::UnitCommand command = BWAPI::UnitCommand::build(executor, position, targetType);
-	return Utils::IssueCommand(executor, command);
+	if (!BWAPI::Broodwar->hasPath(executor->getPosition(), BWAPI::Position(position)))
+	{
+		position = BWAPI::Broodwar->getBuildLocation(targetType, position);
+	}
+	return Utils::IssueBuild(executor, targetType, position);
+	return true;
 }
 
 bool Build::Possible()
@@ -230,7 +234,7 @@ bool Gather::Possible()
 
 bool Gather::IsDone()
 {
-	return false;
+	return !target->exists();
 }
 
 /*
@@ -241,6 +245,12 @@ Move::Move(BWAPI::Unit _executor, BWAPI::Position _position)
 {
 	executor = _executor;
 	position = _position.makeValid();
+}
+
+Move::Move(BWAPI::Unit _executor, BWAPI::TilePosition _position)
+{
+	executor = _executor;
+	position = BWAPI::Position(_position.makeValid());
 }
 
 Move::~Move()
@@ -263,6 +273,6 @@ bool Move::Possible()
 
 bool Move::IsDone()
 {
-	if (position.getDistance(executor->getPosition()) < 10) { return true; }
+	if (position.getDistance(executor->getPosition()) < 20 || !Possible()) { return true; }
 	return false;
 }

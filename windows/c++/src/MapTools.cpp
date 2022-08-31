@@ -4,11 +4,43 @@
 #include <sstream>
 #include <fstream>
 #include <array>
+#include <vector>
 
 // constructor for MapTools
 MapTools::MapTools()
 {
     
+}
+
+std::vector<BWAPI::Position> MapTools::getUnexploredReachableTiles(BWAPI::Position start) {
+    std::vector <BWAPI::Position> positions;
+	 for (int x(0); x < m_width; ++x)
+		{
+			for (int y(0); y < m_height; ++y)
+			{
+                BWAPI::Position position = BWAPI::Position(BWAPI::TilePosition(x, y));
+                if (!isExplored(x, y))
+                {
+                    positions.push_back(position);
+                }
+			}
+		}
+     return positions;
+}
+
+BWAPI::Position MapTools::getUnexploredReachableTile(BWAPI::Position start) {
+	 for (int x(0); x < m_width; ++x)
+		{
+			for (int y(0); y < m_height; ++y)
+			{
+                BWAPI::Position position = BWAPI::Position(BWAPI::TilePosition(x, y));
+                if (!isExplored(x, y) /*&& BWAPI::Broodwar->hasPath(start, position)*/)
+                {
+                    return position;
+                }
+			}
+		}
+     return start;
 }
 
 void MapTools::onStart()
@@ -19,6 +51,9 @@ void MapTools::onStart()
     m_buildable      = Grid<int>(m_width, m_height, 0);
     m_depotBuildable = Grid<int>(m_width, m_height, 0);
     m_lastSeen       = Grid<int>(m_width, m_height, 0);
+
+    enemyBase = BWAPI::Broodwar->self()->getStartLocation();
+    foundEnemyBase = false;
 
     // Set the boolean grid data from the Map
     for (int x(0); x < m_width; ++x)
@@ -256,6 +291,7 @@ void MapTools::draw() const
                 BWAPI::Color color = isWalkable(x, y) ? BWAPI::Color(0, 255, 0) : BWAPI::Color(255, 0, 0);
                 if (isWalkable(x, y) && !isBuildable(x, y)) { color = BWAPI::Color(255, 255, 0); }
                 if (isBuildable(x, y) && !isDepotBuildableTile(x, y)) { color = BWAPI::Color(127, 255, 255); }
+                //BWAPI::Color color = isExplored(x, y) ? BWAPI::Color(0, 255, 0) : BWAPI::Color(255, 0, 0);
                 drawTile(x, y, color);
             }
         }
@@ -281,3 +317,33 @@ void MapTools::draw() const
 
     
 }
+
+void MapTools::SetEnemyBase(BWAPI::TilePosition base)
+{
+	if (enemyBase == BWAPI::Broodwar->self()->getStartLocation())
+	{
+		enemyBase = base;
+        foundEnemyBase = true;
+        std::cout << "Found enemy base\n";
+	}
+}
+
+BWAPI::TilePosition MapTools::GetEnemyBase()
+{
+    if (foundEnemyBase)
+    {
+        return enemyBase;
+    }
+    else
+    {
+        for (auto& base : BWAPI::Broodwar->getStartLocations())
+        {
+            if (base != BWAPI::Broodwar->self()->getStartLocation())
+            {
+                return base;
+            }
+        }
+    }
+    return enemyBase;
+}
+
